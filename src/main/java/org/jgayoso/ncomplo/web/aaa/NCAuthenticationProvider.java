@@ -37,7 +37,7 @@ public class NCAuthenticationProvider implements AuthenticationProvider {
         }
         
         if (authentication.getName().equalsIgnoreCase("FirstUserToCreate") && this.userService.countUsers() == 0) {
-        	this.userService.save("admin", "admin", "oscardelpozog@gmail.com", true, true, new ArrayList<Integer>());
+        	this.userService.save("admin", "admin", "adrian.viano@gmail.com", true, true, new ArrayList<Integer>());
         	this.userService.resetPassword("admin", true);
         	throw new BadCredentialsException("Bad credentials for user " + authentication.getName());
         }
