@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.jgayoso.ncomplo.business.entities.Game.GameComparator;
+import org.jgayoso.ncomplo.business.entities.Game.GameOrderComparator;
 import org.jgayoso.ncomplo.business.entities.User.UserComparator;
 import org.jgayoso.ncomplo.business.util.I18nNamedEntityComparator;
 import org.jgayoso.ncomplo.business.util.JavaScriptBetEvaluator;
@@ -30,27 +31,27 @@ public class Bet {
     private Integer id;
     
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="USER_ID",nullable=false)
     private User user; 
     
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="LEAGUE_ID",nullable=false)
     private League league; 
     
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="GAME_ID",nullable=false)
     private Game game; 
 
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="GAME_SIDE_A_ID",nullable=true)
     private GameSide gameSideA;
 
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="GAME_SIDE_B_ID",nullable=true)
     private GameSide gameSideB;
     
@@ -107,7 +108,7 @@ public class Bet {
     private Boolean betDraw;    
     
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="BET_WINNER_ID",nullable=true)
     private GameSide betWinner;
     
@@ -116,7 +117,7 @@ public class Bet {
     private Boolean gameDraw;
     
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="GAME_WINNER_ID",nullable=true)
     private GameSide gameWinner;
 
@@ -415,6 +416,22 @@ public class Bet {
         
         
     }
+    
+	public static final class BetByGameOrderComparator implements Comparator<Bet> {
+
+		private final GameOrderComparator gameComparator;
+
+		public BetByGameOrderComparator() {
+			super();
+			this.gameComparator = new GameOrderComparator();
+		}
+
+		@Override
+		public int compare(final Bet o1, final Bet o2) {
+			return this.gameComparator.compare(o1.getGame(), o2.getGame());
+		}
+
+	}
     
     
 }

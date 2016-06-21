@@ -37,7 +37,7 @@ public class Game implements DatedAndNamedEntity {
     private Competition competition; 
     
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="ROUND_ID",nullable=false)
     private Round round; 
 
@@ -46,7 +46,7 @@ public class Game implements DatedAndNamedEntity {
     private Integer order;
 
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="DEFAULT_BET_TYPE_ID",nullable=false)
     private BetType defaultBetType; 
 
@@ -55,23 +55,23 @@ public class Game implements DatedAndNamedEntity {
     private String name;
     
     
-    @ElementCollection(fetch=FetchType.EAGER,targetClass=java.lang.String.class)
+    @ElementCollection(fetch=FetchType.LAZY, targetClass=java.lang.String.class)
     @CollectionTable(name="GAME_NAME_I18N",joinColumns=@JoinColumn(name="GAME_ID"))
     @MapKeyColumn(name="LANG",nullable=false,length=20)
     @Column(name="NAME", nullable=false,length=200)
     private final Map<String,String> namesByLang = new LinkedHashMap<>();
     
     
-    @Column(name="DATE",nullable=true)
+    @Column(name="DATE", nullable=true)
     private Date date;
 
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="GAME_SIDE_A_ID",nullable=true)
     private GameSide gameSideA;
 
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="GAME_SIDE_B_ID",nullable=true)
     private GameSide gameSideB;
     
@@ -288,6 +288,42 @@ public class Game implements DatedAndNamedEntity {
         
         
     }
+    
+	public final static class GameOrderComparator implements Comparator<Game> {
+
+		public GameOrderComparator() {
+            super();
+        }
+
+		@Override
+		public int compare(final Game o1, final Game o2) {
+
+			final Integer o1Order = o1.getOrder();
+			final Integer o2Order = o2.getOrder();
+
+			final int orderComp = o1Order.compareTo(o2Order);
+			if (orderComp != 0) {
+				return orderComp;
+			}
+
+			final Date o1Date = o1.getDate();
+			final Date o2Date = o2.getDate();
+
+			if (o1Date != null) {
+				if (o2Date == null) {
+					return -1;
+				}
+				final int dateComp = o1Date.compareTo(o2Date);
+				if (dateComp != 0) {
+					return dateComp;
+				}
+			} else if (o2Date != null) {
+				return 1;
+			}
+			return 0;
+		}
+
+	}
     
     
 }
