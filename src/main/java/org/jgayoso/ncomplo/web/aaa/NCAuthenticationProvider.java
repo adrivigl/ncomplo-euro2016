@@ -37,18 +37,18 @@ public class NCAuthenticationProvider implements AuthenticationProvider {
         }
         
         if (authentication.getName().equalsIgnoreCase("FirstUserToCreate") && this.userService.countUsers() == 0) {
-        	this.userService.save("admin", "admin", "adrian.viano@gmail.com", true, true, new ArrayList<Integer>());
+        	this.userService.save("admin", "admin", "oscardelpozog@gmail.com", true, true, new ArrayList<Integer>());
         	this.userService.resetPassword("admin", true);
         	throw new BadCredentialsException("Bad credentials for user " + authentication.getName());
         }
         
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(authentication.getName());
+        final UserDetails userDetails = this.userDetailsService.loadUserByUsername(authentication.getName());
         if (userDetails != null) {
             try {
                 if (this.passwordEncryptor.checkPassword(authentication.getCredentials().toString(), userDetails.getPassword())) {
                     return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 }
-            } catch (EncryptionOperationNotPossibleException e) {
+            } catch (final EncryptionOperationNotPossibleException e) {
                 if (logger.isInfoEnabled()) {
                     logger.info("Authentication failed for user " + authentication.getName());
                 }
@@ -59,7 +59,7 @@ public class NCAuthenticationProvider implements AuthenticationProvider {
     }
 
     @Override
-    public boolean supports(Class<?> authentication) {
+    public boolean supports(final Class<?> authentication) {
     	return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
